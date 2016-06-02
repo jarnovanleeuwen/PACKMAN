@@ -657,7 +657,7 @@ enum RET_VAL { ACCESS_VIOLATION, NOT_OK, OK };
 RET_VAL isAtBase(uint b_a){ // base_address
 	// check access violation 
 	MemBlock * b_block = new_MemBlock(b_a,b_a);
-	if(!has_MemBlock(&user_memory, b_block)){
+	if(!has_MemBlock(&user_memory, b_block) && !has_MemBlock(&loaded_modules, b_block)){
 		delete b_block;
 		return ACCESS_VIOLATION;
 	}delete b_block;
@@ -764,6 +764,8 @@ void dumpWithNewEntryPoint(uint pe_oep, THREADID tid){
 
 	RET_VAL res;
 	while((res = isAtBase(dump_base)) == NOT_OK){
+		LOG(getThreadAndLevelLOGPrefix(tid)+"entering previous page ["+int_to_hex(dump_base)+"]\n");
+
 		dump_base -= 1; // enter previous page
 		dump_base &= 0xFFFFF000; // go to beginning of page
 	}
@@ -808,6 +810,15 @@ void dumpWithNewEntryPoint(uint pe_oep, THREADID tid){
 		if (df.is_open()) { 
 			uint pe_base  = *(uint*)(dump_base + 0x3C) + dump_base;
 			streamsize size = *(uint*)(pe_base + 0x50); // get Size Of Image
+			uint reloc_section = *(uint*)(pe_base + 0xA0); // get RVA of Base Relocation Directory
+
+			LOG(getThreadAndLevelLOGPrefix(tid)+"starting dump of size ["+int_to_hex(size)+"]\n");
+
+			if (reloc_section) {
+				size = reloc_section;
+
+				LOG(getThreadAndLevelLOGPrefix(tid)+"skipping relocation section found at ["+int_to_hex(reloc_section)+"]\n");
+			}
 
 			df.write((char *) dump_base,size);
 
@@ -908,6 +919,11 @@ VOID SaveWrite(ADDRINT ins_ea, UINT32 ins_size, ADDRINT mem_ea, UINT32 mem_size,
 	checkStopCondition(exec_block);
 	checkForNewLevel(exec_block);
 	insert_MemBlock(&cl->write_list, write_block); // write_list = log of writes in current level
+	insert_MemBlock(&user_memory, write_block);
+
+	if ((uint)mem_ea >= 268435456 && (uint)mem_ea < 269484032) {
+		LOG(getThreadAndLevelLOGPrefix(tid)+"saving write block ["+int_to_hex((uint)mem_ea)+".."+int_to_hex((uint)mem_ea+mem_size-1)+"]\n");
+	}
 	
 	delete exec_block;
 	delete write_block;
