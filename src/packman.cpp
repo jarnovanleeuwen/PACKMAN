@@ -919,11 +919,6 @@ VOID SaveWrite(ADDRINT ins_ea, UINT32 ins_size, ADDRINT mem_ea, UINT32 mem_size,
 	checkStopCondition(exec_block);
 	checkForNewLevel(exec_block);
 	insert_MemBlock(&cl->write_list, write_block); // write_list = log of writes in current level
-	insert_MemBlock(&user_memory, write_block);
-
-	if ((uint)mem_ea >= 268435456 && (uint)mem_ea < 269484032) {
-		LOG(getThreadAndLevelLOGPrefix(tid)+"saving write block ["+int_to_hex((uint)mem_ea)+".."+int_to_hex((uint)mem_ea+mem_size-1)+"]\n");
-	}
 	
 	delete exec_block;
 	delete write_block;
