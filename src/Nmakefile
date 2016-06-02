@@ -1,4 +1,5 @@
 # PREDEFINED:
+# - PARAMS
 # - TOOL_NAME
 # - EXE_FILE
 # - EXE_FILE_NAME_NO_EXT
@@ -25,18 +26,19 @@ PIN_TOOL		= -t $(TOOL_DLL)
 TOOL_OPTIONS	= -logfile $(TOOL_LOG_FILE) -ts $(TIMESTAMP) -pin_path_32 $(PIN_EXE) -process_id 0 -exe_log_path $(EXE_LOG_PATH) -tool_dll_file $(TOOL_DLL) -tool_name $(TOOL_NAME)
 
 $(TOOL_NAME) : $(EXE_FILE) $(TOOL_DLL) $(EXE_LOG_PATH)
-	$(PIN_EXE) $(PIN_OPTIONS) $(PIN_TOOL) $(TOOL_OPTIONS) -- $(EXE_FILE)
+	$(PIN_EXE) $(PIN_OPTIONS) $(PIN_TOOL) $(TOOL_OPTIONS) -- $(EXE_FILE) $(PARAMS)
 
 $(TOOL_DLL) : $(TOOL_O)
 	link /debug /DLL /EXPORT:main /NODEFAULTLIB  /NOLOGO /INCREMENTAL:NO  /OPT:REF  /MACHINE:x86 \
 	 /ENTRY:Ptrace_DllMainCRTStartup@12 /BASE:0x55000000   \
 	 /LIBPATH:$(PIN_ROOT)\ia32\lib \
 	 /LIBPATH:$(PIN_ROOT)\ia32\lib-ext \
+	 /LIBPATH:$(PIN_ROOT)\extras\xed-ia32\lib \
 	 /LIBPATH:$(PIN_ROOT)\extras\xed2-ia32\lib \
 	 /IMPLIB:$(TOOL_O:.o=.lib) \
 	 /PDB:$(TOOL_O:.o=.pdb) \
 	 /OUT:$(TOOL_DLL) $(TOOL_O) \
-	 pin.lib libxed.lib libcpmt.lib libcmt.lib pinvm.lib kernel32.lib ntdll-32.lib	
+	 pin.lib libxed.lib libcpmt.lib libcmt.lib pinvm.lib kernel32.lib ntdll-32.lib
  
 $(TOOL_O) : $(TOOL_CPP) $(SRC_DIR)
 	cl /c /MT /EHs- /EHa- /wd4530 /Z7 \
@@ -45,6 +47,7 @@ $(TOOL_O) : $(TOOL_CPP) $(SRC_DIR)
 	 /I$(PIN_ROOT)\source\include\pin \
 	 /I$(PIN_ROOT)\source\include\pin\gen \
 	 /I$(PIN_ROOT)\source\tools\InstLib \
+	 /I$(PIN_ROOT)\extras\xed-ia32\include \
 	 /I$(PIN_ROOT)\extras\xed2-ia32\include \
 	 /I$(PIN_ROOT)\extras\components\include \
 	 /Fo$(TOOL_O) $(TOOL_CPP)

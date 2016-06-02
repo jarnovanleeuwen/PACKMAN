@@ -7,8 +7,8 @@ REM #####################
 REM set global variables:
 REM #####################
 set TOOL_NAME=packman
-set WF_ROOT=C:\Users\pmat\Desktop\packman
-set PIN_ROOT=C:\Users\pmat\Desktop\pin
+set WF_ROOT=C:\Unpacker\PACKMAN
+set PIN_ROOT=C:\Unpacker\pin
 
 REM set TIMESTAMP
 For /f "tokens=2-4 delims=/ " %%a in ('date /t') do (set mydate=%%c-%%a-%%b)
@@ -47,6 +47,17 @@ For %%A in ("%EXE_FILE%") do (
 	REM %%~nA  = filename withOUT extention
     Set EXE_FILE_NAME_NO_EXT=%%~nA
 )
+
+REM throw the first two parameters away
+shift
+shift
+set PARAMS=%1
+:loop
+shift
+if [%1]==[] goto afterloop
+set PARAMS=%PARAMS% %1
+goto loop
+:afterloop
 
 nmake.exe /NOLOGO /f Nmakefile
 GOTO DONE
