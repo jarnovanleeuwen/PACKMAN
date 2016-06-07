@@ -1,4 +1,5 @@
 # PREDEFINED:
+# - LOG_DIR
 # - PARAMS
 # - TOOL_NAME
 # - EXE_FILE
@@ -8,14 +9,13 @@
 # - PIN_ROOT
 
 SRC_DIR			= $(WF_ROOT)\src
-LOG_DIR			= $(WF_ROOT)\out
 
 PIN_EXE       	= $(PIN_ROOT)\pin.exe
 PIN_TOOLS_DIR 	= $(PIN_ROOT)\source\tools
 
-EXE_LOG_PATH	= $(LOG_DIR)\$(TIMESTAMP)_$(EXE_FILE_NAME_NO_EXT)
-TOOL_LOG_FILE	= $(EXE_LOG_PATH)\tool_procID_0.log
-PIN_LOG_FILE	= $(EXE_LOG_PATH)\pin_procID_0.log
+EXE_LOG_PATH	= $(LOG_DIR)\$(EXE_FILE_NAME_NO_EXT)
+TOOL_LOG_FILE	= $(EXE_LOG_PATH)\tool.log
+PIN_LOG_FILE	= $(EXE_LOG_PATH)\pin.log
 
 TOOL_CPP		= $(SRC_DIR)\$(TOOL_NAME).cpp
 TOOL_O			= $(SRC_DIR)\$(TOOL_NAME).o

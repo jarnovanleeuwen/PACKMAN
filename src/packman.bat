@@ -1,14 +1,13 @@
 echo off
 @SETLOCAL
-cls
-echo.
 
 REM #####################
 REM set global variables:
 REM #####################
 set TOOL_NAME=packman
-set WF_ROOT=C:\Unpacker\PACKMAN
-set PIN_ROOT=C:\Unpacker\pin
+set WF_ROOT=E:\PACKMAN
+set PIN_ROOT=E:\pin
+set LOG_DIR=E:\unpacked
 
 REM set TIMESTAMP
 For /f "tokens=2-4 delims=/ " %%a in ('date /t') do (set mydate=%%c-%%a-%%b)
