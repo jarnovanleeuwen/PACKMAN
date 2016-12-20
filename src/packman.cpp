@@ -810,15 +810,8 @@ void dumpWithNewEntryPoint(uint pe_oep, THREADID tid){
 		if (df.is_open()) { 
 			uint pe_base  = *(uint*)(dump_base + 0x3C) + dump_base;
 			streamsize size = *(uint*)(pe_base + 0x50); // get Size Of Image
-			uint reloc_section = *(uint*)(pe_base + 0xA0); // get RVA of Base Relocation Directory
 
 			LOG(getThreadAndLevelLOGPrefix(tid)+"starting dump of size ["+int_to_hex(size)+"]\n");
-
-			if (reloc_section) {
-				size = reloc_section;
-
-				LOG(getThreadAndLevelLOGPrefix(tid)+"skipping relocation section found at ["+int_to_hex(reloc_section)+"]\n");
-			}
 
 			df.write((char *) dump_base,size);
 
